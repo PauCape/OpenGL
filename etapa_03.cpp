@@ -13,13 +13,16 @@ const int W_HEIGHT = 500;
 static const int FPS = 60;
 
 // Declaraciones de funciones
-void drawAxis();
+void drawAxis(GLboolean switchA);
 void init();
+void board(GLboolean switchB);
 
 // Variables propias
 GLfloat fAngulo;
 GLfloat fVariation;
 GLboolean variationBool = true;
+GLboolean switchBoard = true;
+GLboolean switchAxis = true;
 
 // Función que visualiza la escena OpenGL
 void display(void)
@@ -27,22 +30,13 @@ void display(void)
     // Borramos la escena
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Dibujamos una malla blanca
-    glColor3f(1.0, 1.0, 1.0);
-    glBegin(GL_LINES);
-    for (GLfloat i = -2.5; i <= 2.5; i += 0.25)
-    {
-        glVertex3f(i, 0, 2.5);
-        glVertex3f(i, 0, -2.5);
-        glVertex3f(2.5, 0, i);
-        glVertex3f(-2.5, 0, i);
-    }
-    glEnd();
+    board(switchBoard);
 
     // Dibujamos los ejes de coordenadas
-    drawAxis();
+    drawAxis(switchAxis);
 
     glPushMatrix();
+    glColor3f(255.0f, 0.0f, 0.0f);
 
     // Combinacion de translacion
     glTranslatef(-0.6f, 0.0f, 0.4f);
@@ -53,6 +47,7 @@ void display(void)
     glPopMatrix();
 
     glPushMatrix();
+    glColor3f(255.0f, 0.0f, 0.0f);
 
     // Combinacion de translacion y rotación
     glTranslatef(0.3f, 0.0f, -0.5f);
@@ -63,6 +58,7 @@ void display(void)
     glPopMatrix();
 
     glPushMatrix();
+    glColor3f(255.0f, 0.0f, 0.0f);
 
     // Combinacion de translacion y escalado
     glTranslatef(-0.6f, 0.0f, -0.6f);
@@ -75,37 +71,59 @@ void display(void)
     glutSwapBuffers();
 }
 
-// Función que sirve para dibujar los ejes de coordenadas
-void drawAxis()
+// Función que sirbe para dibujar la malla blanca
+void board(GLboolean switchB)
 {
-    glLineWidth(3.0f);
+    if (switchB)
+    {
+        // Dibujamos una malla blanca
+        glColor3f(1.0, 1.0, 1.0);
+        glBegin(GL_LINES);
+        for (GLfloat i = -2.5; i <= 2.5; i += 0.25)
+        {
+            glVertex3f(i, 0, 2.5);
+            glVertex3f(i, 0, -2.5);
+            glVertex3f(2.5, 0, i);
+            glVertex3f(-2.5, 0, i);
+        }
+        glEnd();
+    }
+}
 
-    glPushMatrix();
+// Función que sirve para dibujar los ejes de coordenadas
+void drawAxis(GLboolean switchA)
+{
+    if (switchA)
+    {
+        glLineWidth(3.0f);
 
-    glColor3f(255.0f, 255.0f, 0.0f);
+        glPushMatrix();
 
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, -0.5f, 0.0f);
-    glVertex3f(0.0f, 0.5f, 0.0f);
-    glEnd();
+        glColor3f(255.0f, 255.0f, 0.0f);
 
-    glColor3f(0.0f, 0.0f, 255.0f);
+        glBegin(GL_LINES);
+        glVertex3f(0.0f, -0.5f, 0.0f);
+        glVertex3f(0.0f, 0.5f, 0.0f);
+        glEnd();
 
-    glBegin(GL_LINES);
-    glVertex3f(-0.5f, 0.0f, 0.0f);
-    glVertex3f(0.5f, 0.0f, 0.0f);
-    glEnd();
+        glColor3f(0.0f, 0.0f, 255.0f);
 
-    glColor3f(255.0f, 0.0f, 0.0f);
+        glBegin(GL_LINES);
+        glVertex3f(-0.5f, 0.0f, 0.0f);
+        glVertex3f(0.5f, 0.0f, 0.0f);
+        glEnd();
 
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, 0.0f, -0.5f);
-    glVertex3f(0.0f, 0.0f, 0.5f);
-    glEnd();
+        glColor3f(255.0f, 0.0f, 0.0f);
 
-    glPopMatrix();
+        glBegin(GL_LINES);
+        glVertex3f(0.0f, 0.0f, -0.5f);
+        glVertex3f(0.0f, 0.0f, 0.5f);
+        glEnd();
 
-    glLineWidth(1.0f);
+        glPopMatrix();
+
+        glLineWidth(1.0f);
+    }
 }
 
 void timer(int v)
@@ -160,6 +178,25 @@ void init()
     glRotatef(-70, 0, 1, 0);
 }
 
+void KeyInput(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    case '1':
+        if (switchAxis == true)
+            switchAxis = false;
+        else
+            switchAxis = true;
+        break;
+    case '2':
+        if (switchBoard == true)
+            switchBoard = false;
+        else
+            switchBoard = true;
+        break;
+    }
+}
+
 // Función principal
 int main(int argc, char **argv)
 {
@@ -176,6 +213,7 @@ int main(int argc, char **argv)
 
     // Indicamos cuales son las funciones que usamos
     glutDisplayFunc(display);
+    glutKeyboardFunc(KeyInput);
     glutTimerFunc(100, timer, 0);
 
     // Llamamos al metodo de inicialización
