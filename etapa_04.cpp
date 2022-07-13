@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cmath>
+#include <iostream>
 
 #define PI 3.1415
 
@@ -112,6 +113,8 @@ void timer(int v)
             variationBool = true;
         }
     }
+
+    printf("x: %f, y: %f, z: %f, ax: %f, ay: %f", pos_camara_X, pos_camara_Y, pos_camara_Z, angulo_x, angulo_y);
 
     // Indicamos que es necesario repintar la pantalla
     glutPostRedisplay();

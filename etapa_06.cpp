@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cmath>
+#include <iostream>
 
 #define PI 3.1415
 
@@ -22,6 +23,7 @@ void init();
 void myCamera();
 void light();
 void board();
+void cargarmenu();
 
 // Variables propias
 GLfloat fAngulo;
@@ -46,6 +48,8 @@ GLboolean switchLight0 = true;
 GLboolean switchLight1 = true;
 GLboolean switchLight2 = true;
 GLboolean switchFog = false;
+GLboolean ControlLuz = false;
+GLboolean ControlCamara = false;
 
 // Colores
 GLfloat WHITE[] = {1, 1, 1};
@@ -353,28 +357,28 @@ void KeyInput(unsigned char key, int x, int y)
 {
     switch (key)
     {
-    case 'a':
-    case 'A':
+    case 't':
+    case 'T':
         (armRotation += 5) %= 360;
         break;
-    case 'd':
-    case 'D':
+    case 'g':
+    case 'G':
         (armRotation -= 5) %= 360;
         break;
     case '1':
-        if (switchLight0 == true)
+        if (switchLight0 == true && ControlLuz == true)
             switchLight0 = false;
         else
             switchLight0 = true;
         break;
     case '2':
-        if (switchLight1 == true)
+        if (switchLight1 == true && ControlLuz == true)
             switchLight1 = false;
         else
             switchLight1 = true;
         break;
     case '3':
-        if (switchLight2 == true)
+        if (switchLight2 == true && ControlLuz == true)
             switchLight2 = false;
         else
             switchLight2 = true;
@@ -384,6 +388,26 @@ void KeyInput(unsigned char key, int x, int y)
             switchFog = false;
         else
             switchFog = true;
+        break;
+    case 'w':
+    case 'W':
+        if (ControlCamara == true)
+            angulo_y -= 0.0003f;
+        break;
+    case 's':
+    case 'S':
+        if (ControlCamara == true)
+            angulo_y += 0.0003f;
+        break;
+    case 'a':
+    case 'A':
+        if (ControlCamara == true)
+            angulo_x -= 0.0003f;
+        break;
+    case 'd':
+    case 'D':
+        if (ControlCamara == true)
+            angulo_x += 0.0003f;
         break;
     case 32:
         if (shadowType)
@@ -396,6 +420,96 @@ void KeyInput(unsigned char key, int x, int y)
             shadowType = true;
         break;
     }
+}
+
+void menu(int valor)
+{
+    switch (valor)
+    {
+    case 0:
+        if (ControlCamara == true)
+        {
+            ControlCamara = false;
+            cargarmenu();
+        }
+        else
+        {
+            ControlCamara = true;
+            cargarmenu();
+        }
+        break;
+    case 1:
+        if (ControlLuz == true)
+        {
+            ControlLuz = false;
+            cargarmenu();
+        }
+        else
+        {
+            ControlLuz = true;
+            cargarmenu();
+        }
+        break;
+    case 2:
+        pos_camara_X = -0.006036;
+        pos_camara_Y = 8.405707;
+        pos_camara_Z = 1.426396;
+        angulo_x = -49.977200;
+        angulo_y = 180.030300;
+        break;
+    case 3:
+        pos_camara_X = 6.708357;
+        pos_camara_Y = 0.393704;
+        pos_camara_Z = 0.051496;
+        angulo_x = -50.004200;
+        angulo_y = 180.005100;
+        break;
+    case 4:
+        pos_camara_X = 8.486033;
+        pos_camara_Y = 6.351840;
+        pos_camara_Z = 6.871893;
+        angulo_x = -49.994000;
+        angulo_y = 180.014100;
+        break;
+    }
+}
+
+void cargarmenu()
+{
+
+    int Control_Camara = glutCreateMenu(menu);
+
+    if (ControlCamara == false)
+    {
+        glutAddMenuEntry("Control camara ON", 0);
+    }
+    else
+    {
+        glutAddMenuEntry("Control camara OFF", 0);
+    }
+
+    int Control_Luz = glutCreateMenu(menu);
+
+    if (ControlLuz == false)
+    {
+        glutAddMenuEntry("Control luces ON", 1);
+    }
+    else
+    {
+        glutAddMenuEntry("Control luces OFF", 1);
+    }
+
+    int vistas = glutCreateMenu(menu);
+    glutAddMenuEntry("Vista 01 ON", 2);
+    glutAddMenuEntry("Vista 02 ON", 3);
+    glutAddMenuEntry("Vista 03 ON", 4);
+
+    glutCreateMenu(menu);
+    glutAddSubMenu("Control Camara", Control_Camara);
+    glutAddSubMenu("control Luces", Control_Luz);
+    glutAddSubMenu("Vistas", vistas);
+
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 // Función principal
@@ -421,6 +535,7 @@ int main(int argc, char **argv)
 
     // Llamamos al metodo de inicialización
     init();
+    cargarmenu();
 
     // Comienza la ejecución del core de GLUT
     glutMainLoop();
